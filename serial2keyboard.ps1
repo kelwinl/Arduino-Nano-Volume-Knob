@@ -83,9 +83,24 @@ while($true)
                 try{$port.Open()}
                 catch{Start-Sleep -Second 2}
             }
-        
-        if($encoderPrev -ne $encoderValue)
+
+
+
+        if($encoderValue -ge 999)
             {
+                if([audio]::Mute -eq $true)
+                    {
+                        [audio]::Mute = $false
+                    }
+                else
+                    {
+                        [audio]::Mute = $true
+                    }
+                $encoderValue = $encoderPrev
+            }
+        elseif($encoderPrev -ne $encoderValue)
+            {
+                [audio]::Mute = $false
                 if($encoderValue -gt $encoderPrev)
                     {
                         if($fvolume -le 0.8)
@@ -108,15 +123,11 @@ while($true)
                                 [audio]::Volume = 0
                             }
                     }
-
                 Write-Output $encoderValue
                 Write-Output $encoderPrev
                 Write-Output $fvolume
-                
-                $encoderPrev = $encoderValue
-                $fvolume = [audio]::Volume
             }
-
+        
         $encoderPrev = $encoderValue
-                $fvolume = [audio]::Volume
+        $fvolume = [audio]::Volume
     }
